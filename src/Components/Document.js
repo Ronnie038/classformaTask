@@ -1,28 +1,3 @@
-// import React, { useEffect, useRef, useState } from 'react';
-// import { useParams } from 'react-router-dom';
-
-// const DocumentCom = () => {
-// 	const { task_id } = useParams();
-// 	const [fileBase64String, setFileBase64String] = useState('');
-// 	const viewer = useRef(null);
-// 	const [docList, setDocList] = useState([]);
-
-// 	useEffect(() => {
-// 		fetch('documents.json')
-// 			.then((res) => res.json())
-// 			.then((data) => setDocList(data))
-// 			.catch((err) => console.log(err));
-// 	}, []);
-
-// 	return (
-// 		<div>
-// 			<div className='webviewer' ref={viewer}></div>
-// 		</div>
-// 	);
-// };
-
-// export default DocumentCom;
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -44,10 +19,8 @@ const documentsUrl = [
 ];
 
 const DocumentCom = () => {
-	// const [doc, setDoc] = useState({});
 	const { id } = useParams();
 	const doc = documentsUrl.find((d) => d.id === parseInt(id));
-	// const [url, setUrl] = useState('');
 
 	const [page, setPage] = useState(1);
 	const canvasRef = useRef(null);
@@ -66,7 +39,6 @@ const DocumentCom = () => {
 	const startX = useRef(null);
 	const startY = useRef(null);
 
-	const savedhighlights = JSON.parse(localStorage.getItem('highlights'));
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		canvas.width = 595;
@@ -80,14 +52,19 @@ const DocumentCom = () => {
 		canvasOffSetY.current = canvasOffSet.top;
 	}, []);
 
+	// / getting all saved annotation from localStorage
+
+	let savedhighlights = JSON.parse(localStorage.getItem('highlights'));
+	if (savedhighlights) {
+		savedhighlights = savedhighlights.filter((item) => item.id === id);
+	}
+
+	/// displayed all saved anotation
 	highlited();
 	function highlited() {
 		if (savedhighlights?.length > 0 && contextRef.current) {
-			const documentAnotation = savedhighlights.filter(
-				(item) => item.id === id
-			);
 			contextRef.current.globalAlpha = 0.2;
-			documentAnotation.map((anotated) => {
+			savedhighlights.map((anotated) => {
 				contextRef.current.fillStyle = anotated.color;
 				contextRef.current?.fillRect(
 					anotated.x,
@@ -98,6 +75,8 @@ const DocumentCom = () => {
 			});
 		}
 	}
+
+	// / starting  annotation
 
 	const startDrawingRectangle = ({ nativeEvent }) => {
 		if (isAuthoreActive || isTitleActive) {
@@ -110,6 +89,8 @@ const DocumentCom = () => {
 			setIsDrawing(true);
 		}
 	};
+
+	/// anotation  function
 
 	const drawRectangle = ({ nativeEvent }) => {
 		if (!isDrawing) {
@@ -156,6 +137,8 @@ const DocumentCom = () => {
 		return;
 	};
 
+	/// anotation stoping function
+
 	const stopDrawingRectangle = () => {
 		const savedhighlights = JSON.parse(localStorage.getItem('highlights'));
 		let highlights = [];
@@ -171,6 +154,8 @@ const DocumentCom = () => {
 		refreshPage();
 		return;
 	};
+
+	/// label status storing in localstorage
 
 	const activeTitleAnotate = (e) => {
 		setIsTitleActive((prev) => !prev);
@@ -193,6 +178,8 @@ const DocumentCom = () => {
 			})
 		);
 	};
+
+	// / getting  label status from localstorage
 
 	useEffect(() => {
 		const activeNotation = JSON.parse(localStorage.getItem('activeNotation'));
@@ -226,6 +213,17 @@ const DocumentCom = () => {
 							onClick={activeAuthoreAnotate}
 						>
 							Authore
+						</button>
+						<button
+							className='deleteAnotation'
+							onClick={() => {
+								const confirm = window.confirm('are you sure ');
+								if (!confirm) return;
+								localStorage.clear();
+								refreshPage();
+							}}
+						>
+							Clear All
 						</button>
 					</div>
 					<div className=''>
