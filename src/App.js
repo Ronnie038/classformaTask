@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import './Components/Document.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import DocItems from './Components/DocItems';
 import DocumentCom from './Components/Document';
-import Main from './layout/Main';
 
 const App = () => {
 	const router = createBrowserRouter([
@@ -12,7 +12,7 @@ const App = () => {
 			element: <DocItems />,
 		},
 		{
-			path: 'document/:task_id',
+			path: 'document/:id',
 			loader: ({ params }) => {
 				return params;
 			},
