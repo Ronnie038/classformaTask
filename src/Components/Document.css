@@ -14,18 +14,16 @@ hr {
 .main {
 	/* background: red; */
 	width: fit-content;
-	margin-top: 50px;
-	margin-right: 50px;
-	margin-left: auto;
+
 	text-align: left;
 	border: 1px solid black;
 }
 .container {
 	display: flex;
+	justify-content: space-around;
 }
 
 .canvas-container {
-	border: 2px solid rgba(144, 255, 150, 0.116);
 	text-align: center;
 }
 
@@ -51,10 +49,25 @@ hr {
 .title {
 	background-color: red;
 	padding: 3px;
+	border-radius: 5px;
 }
 
 .author {
 	background-color: blue;
 	color: white;
 	padding: 3px;
+	border-radius: 5px;
+}
+
+.cord {
+	font-size: 12px;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+.active {
+	background-color: green;
+	font-size: 20px;
+	color: white;
+	box-shadow: 5px 5px 5px 1px rgba(35, 78, 48, 0.2);
 }

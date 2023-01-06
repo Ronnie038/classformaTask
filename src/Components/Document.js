@@ -73,9 +73,6 @@ const DocumentCom = () => {
 		canvas.height = 841;
 
 		const context = canvas.getContext('2d');
-		context.lineCap = 'round';
-
-		context.lineWidth = 2;
 		contextRef.current = context;
 
 		const canvasOffSet = canvas.getBoundingClientRect();
@@ -86,9 +83,11 @@ const DocumentCom = () => {
 	highlited();
 	function highlited() {
 		if (savedhighlights?.length > 0 && contextRef.current) {
+			const documentAnotation = savedhighlights.filter(
+				(item) => item.id === id
+			);
 			contextRef.current.globalAlpha = 0.2;
-			// contextRef.current.fillStyle = 'rgba(144, 255, 150, 0.5)';
-			savedhighlights.map((anotated) => {
+			documentAnotation.map((anotated) => {
 				contextRef.current.fillStyle = anotated.color;
 				contextRef.current?.fillRect(
 					anotated.x,
@@ -152,6 +151,7 @@ const DocumentCom = () => {
 			width: rectWidht,
 			color: color,
 			name,
+			id,
 		});
 		return;
 	};
@@ -174,12 +174,33 @@ const DocumentCom = () => {
 
 	const activeTitleAnotate = (e) => {
 		setIsTitleActive((prev) => !prev);
+
 		setIsAuthoreActive(false);
+		localStorage.setItem(
+			'activeNotation',
+			JSON.stringify({ isTitleActive: !isTitleActive, isAuthoreActive: false })
+		);
 	};
 	const activeAuthoreAnotate = () => {
 		setIsAuthoreActive((prev) => !prev);
 		setIsTitleActive(false);
+
+		localStorage.setItem(
+			'activeNotation',
+			JSON.stringify({
+				isTitleActive: false,
+				isAuthoreActive: !isAuthoreActive,
+			})
+		);
 	};
+
+	useEffect(() => {
+		const activeNotation = JSON.parse(localStorage.getItem('activeNotation'));
+
+		if (!activeNotation) return;
+		setIsTitleActive(activeNotation.isTitleActive);
+		setIsAuthoreActive(activeNotation.isAuthoreActive);
+	}, []);
 
 	const { pdfDocument, pdfPage } = usePdf({
 		file: doc.url,
@@ -194,10 +215,16 @@ const DocumentCom = () => {
 					<div className=''>
 						<h3>Labels</h3>
 						<hr />
-						<button className='btn-title' onClick={activeTitleAnotate}>
+						<button
+							className={`btn-title ${isTitleActive ? 'active' : ''}`}
+							onClick={activeTitleAnotate}
+						>
 							Title
 						</button>
-						<button className='btn-author' onClick={activeAuthoreAnotate}>
+						<button
+							className={`btn-author ${isAuthoreActive ? 'active' : ''}`}
+							onClick={activeAuthoreAnotate}
+						>
 							Authore
 						</button>
 					</div>
@@ -205,8 +232,8 @@ const DocumentCom = () => {
 						<h3>Boxes</h3>
 						<hr />
 						<>
-							{savedhighlights?.map((cord) => (
-								<div>
+							{savedhighlights?.map((cord, idx) => (
+								<div className='cord' key={idx}>
 									<span>x: {cord.x}, </span>
 									<span>y: {cord.y}, </span>
 									<span>height: {cord.height}, </span>
@@ -224,10 +251,6 @@ const DocumentCom = () => {
 					<canvas
 						className='canvas-container'
 						ref={canvasRef}
-						onClick={() => {
-							// refreshPage();
-							// drawRectangle();
-						}}
 						onMouseDown={startDrawingRectangle}
 						onMouseMove={drawRectangle}
 						onMouseUp={stopDrawingRectangle}
