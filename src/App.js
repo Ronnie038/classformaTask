@@ -1,25 +1,29 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import DocItems from './Components/DocItems';
+import DocumentCom from './Components/Document';
+import Main from './layout/Main';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+	const router = createBrowserRouter([
+		{
+			path: '/',
+			element: <DocItems />,
+		},
+		{
+			path: 'document/:task_id',
+			loader: ({ params }) => {
+				return params;
+			},
+			element: <DocumentCom />,
+		},
+	]);
+	return (
+		<div>
+			<RouterProvider router={router} />
+		</div>
+	);
+};
 
 export default App;
