@@ -79,3 +79,10 @@ hr {
 	border-radius: 5px;
 	margin-left: 10px;
 }
+
+.loading {
+	margin-top: 40%;
+	/* margin-bottom: 40%; */
+	font-size: 30px;
+	font-weight: bold;
+}

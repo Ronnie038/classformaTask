@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 
 const DocItems = () => {
 	const [docList, setDocList] = useState([]);
-	console.log(docList);
 
 	useEffect(() => {
 		fetch('documents.json')

@@ -245,7 +245,7 @@ const DocumentCom = () => {
 					</div>
 				</div>
 				<div className='main'>
-					{!pdfDocument && <span>Loading...</span>}
+					{!pdfDocument && <span className='loading'>Loading...</span>}
 					<canvas
 						className='canvas-container'
 						ref={canvasRef}
